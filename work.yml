@@ -6,5 +6,6 @@
   roles:
     - common
     - atom
+    - chrome
 #    - zcash
 #    - pool

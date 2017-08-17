@@ -1,4 +1,4 @@
-# ansible-zogpool
+# ansible-work
 Playbook for getting up and running fast
 
 ## Usage
