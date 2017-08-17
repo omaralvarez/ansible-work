@@ -1,0 +1,10 @@
+---
+- name: Install everything needed for work
+  hosts: all
+  sudo: yes
+
+  roles:
+    - common
+    - atom
+#    - zcash
+#    - pool
