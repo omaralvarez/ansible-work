@@ -7,5 +7,4 @@
     - common
     - atom
     - chrome
-#    - zcash
-#    - pool
+    - opencv

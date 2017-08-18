@@ -12,3 +12,8 @@
     - unzip
     - git
     - automake
+    - tree
+    - python-dev
+    - python-pip
+    - python3.5-dev
+    - python3-pip

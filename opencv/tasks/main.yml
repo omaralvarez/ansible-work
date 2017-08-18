@@ -1,0 +1,106 @@
+- name: Install libraries for various image formats
+  become: true
+  apt: name={{ item }} state=present
+  with_items:
+  - libjpeg62-turbo-dev
+  - libtiff5-dev
+  - libpng-dev
+  - libopenexr-dev
+  - libgdal-dev
+
+- name: Install libraries for various video formats
+  become: true
+  apt: name={{ item }} state=present
+  with_items:
+  - libavcodec-dev
+  - libavformat-dev
+  - libswscale-dev
+  - libavresample-dev
+  - libv4l-dev
+
+- name: Install GTK for OpenCV GUI
+  become: true
+  apt: name=libgtk2.0-dev state=present
+
+- name: Install packages used for optimization in OpenCV
+  become: true
+  apt: name={{ item }}
+  with_items:
+  - libatlas-base-dev
+  - gfortran
+  - libtbb-dev
+  - libopenblas-dev
+  - liblapacke-dev
+  - libeigen3-dev
+  - python3-numpy
+
+- name: Download and unzip libjasper
+  unarchive: src=http://www.ece.uvic.ca/~frodo/jasper/software/jasper-{{ libjasper_version }}.tar.gz dest={{ download_dir }} copy=no
+
+- name: Check if temporary directory already exists
+  stat: path={{ download_dir }}
+  register: tmp
+
+- name: Create temporary download directory
+  file: name={{ download_dir }} state=directory
+  when: tmp.stat.exists == false
+
+- name: Create build directory
+  file: name={{ download_dir }}/jasper-{{ libjasper_version }}/build state=directory
+
+- name: Make the libjasper build artifacts
+  shell: |
+    cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=Release -DCMAKE_SKIP_INSTALL_RPATH=YES -DCMAKE_INSTALL_DOCDIR=/usr/share/doc/jasper-{{ libjasper_version }} ..
+  args:
+    chdir: "{{ download_dir }}/jasper-{{ libjasper_version }}/build"
+    executable: /bin/bash
+
+- name: Compile libjasper
+  shell: |
+    make -j$(nproc)
+    make install
+  args:
+    chdir: "{{ download_dir }}/jasper-{{ libjasper_version }}/build"
+    executable: /bin/bash
+
+- name: Download and unzip opencv
+  unarchive: src=https://github.com/Itseez/opencv/archive/{{ opencv_version }}.tar.gz dest={{ download_dir }} copy=no
+
+- name: Download and unzip opencv_contrib
+  unarchive: src=https://github.com/Itseez/opencv_contrib/archive/{{ opencv_version }}.tar.gz dest={{ download_dir }} copy=no
+
+- name: Create build directory
+  file: name={{ download_dir }}/opencv-{{ opencv_version }}/build state=directory
+
+- name: Make the opencv build artifacts
+  shell: |
+    cmake -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_INSTALL_PREFIX=/usr/local -DINSTALL_C_EXAMPLES=OFF -DINSTALL_PYTHON_EXAMPLES=OFF -DOPENCV_EXTRA_MODULES_PATH={{ download_dir }}/opencv_contrib-{{ opencv_version }}/modules -DBUILD_EXAMPLES=OFF -DWITH_CUDA=OFF -DWITH_OPENMP=ON -DENABLE_SSSE3=ON -DENABLE_SSE41=ON -DENABLE_SSE42=ON -DENABLE_POPCNT=ON -DENABLE_AVX=ON -DENABLE_AVX2=ON -DWITH_FFMPEG=YES -DWITH_ITT=OFF -DWITH_TBB=ON -DCMAKE_C_FLAGS="-std=c11 -march=native" -DCMAKE_CXX_FLAGS="-std=c++11 -march=native" -DBUILD_opencv_python3=yes ..
+  args:
+    chdir: "{{ download_dir }}/opencv-{{ opencv_version }}/build"
+    executable: /bin/bash
+
+- name: Compile opencv
+  shell: |
+    make -j$(nproc)
+  args:
+    chdir: "{{ download_dir }}/opencv-{{ opencv_version }}/build"
+    executable: /bin/bash
+
+- name: Get full path of download directory ("~" varies by user)
+  shell: pwd
+  args:
+    chdir: "{{ download_dir }}"
+  register: pwd_result
+
+- name: Install opencv
+  become: true
+  shell: |
+    make install
+    ldconfig
+  args:
+    chdir: "{{ pwd_result.stdout }}/opencv-{{ opencv_version }}/build"
+    executable: /bin/bash
+
+- name: Remove temporary download directory, if it didn't prevously exist
+  file: name={{ download_dir }} state=absent
+  when: tmp.stat.exists == false
