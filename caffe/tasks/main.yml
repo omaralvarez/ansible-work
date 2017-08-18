@@ -1,0 +1,55 @@
+---
+- name: Install libraries for caffe
+  become: true
+  apt: name={{ item }} state=present install_recommends=no
+  with_items:
+  - libprotobuf-dev
+  - libleveldb-dev
+  - libsnappy-dev
+  - libhdf5-serial-dev
+  - protobuf-compiler
+  - libboost-all-dev
+  - libgflags-dev
+  - libgoogle-glog-dev
+  - liblmdb-dev
+
+- name: Download and unzip caffe
+  unarchive: src=https://github.com/BVLC/caffe/archive/{{ caffe_version }}.tar.gz dest={{ download_dir }} copy=no
+
+- name: Check if temporary directory already exists
+  stat: path={{ download_dir }}
+  register: tmp
+
+- name: Create temporary download directory
+  file: name={{ download_dir }} state=directory
+  when: tmp.stat.exists == false
+
+- name: Create build directory
+  file: name={{ download_dir }}/caffe-{{ caffe_version }}/build state=directory
+
+- name: Make the caffe build artifacts
+  shell: |
+    cmake -DBUILD_SHARED_LIB=ON -DUSE_CUDNN=OFF ..
+  args:
+    chdir: "{{ download_dir }}/caffe-{{ caffe_version }}/build"
+    executable: /bin/bash
+
+- name: Compile caffe
+  shell: |
+    make -j$(nproc)
+    make install
+    make runtest
+    make pycaffe
+  args:
+    chdir: "{{ download_dir }}/caffe-{{ caffe_version }}/build"
+    executable: /bin/bash
+
+- name: Update bashrc for caffe
+  lineinfile:
+    dest={{ home }}/{{ user }}/.bashrc
+    line="export CAFFE_ROOT={{ download_dir }}/caffe-{{ caffe_version }}\nexport PYTHONPATH={{ download_dir }}/caffe-{{ caffe_version }}/python:$PYTHONPATH"
+    regexp="^CAFFE_ROOT="
+    state=present
+    owner={{ user }}
+    insertafter=EOF
+    create=True

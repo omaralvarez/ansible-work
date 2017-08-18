@@ -1,5 +1,4 @@
 ---
-
 - name: Install chrome keys
   apt_key:
     url: "{{ chrome_apt_keyurl }}"

@@ -1,0 +1,7 @@
+---
+- name: Install only caffe
+  hosts: all
+  sudo: yes
+
+  roles:
+    - caffe
