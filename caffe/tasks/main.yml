@@ -44,12 +44,14 @@
     chdir: "{{ download_dir }}/caffe-{{ caffe_version }}/build"
     executable: /bin/bash
 
-- name: Update bashrc for caffe
+- name: Update CAFFE_ROOT in bashrc for caffe
   lineinfile:
     dest={{ home }}/{{ user }}/.bashrc
-    line="export CAFFE_ROOT={{ download_dir }}/caffe-{{ caffe_version }}\nexport PYTHONPATH={{ download_dir }}/caffe-{{ caffe_version }}/python:$PYTHONPATH"
-    regexp="^CAFFE_ROOT="
-    state=present
-    owner={{ user }}
-    insertafter=EOF
-    create=True
+    line="export CAFFE_ROOT={{ download_dir }}/caffe-{{ caffe_version }}"
+    regexp="export CAFFE_ROOT=.*"
+
+- name: Update PYTHONPATH in bashrc for pycaffe
+  lineinfile:
+    dest={{ home }}/{{ user }}/.bashrc
+    line="export PYTHONPATH={{ download_dir }}/caffe-{{ caffe_version }}/python:$PYTHONPATH"
+    regexp="export PYTHONPATH=.*"
