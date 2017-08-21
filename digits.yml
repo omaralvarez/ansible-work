@@ -1,0 +1,6 @@
+---
+- name: Install only caffe
+  hosts: all
+
+  roles:
+    - digits

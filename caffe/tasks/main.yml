@@ -40,6 +40,7 @@
     make -j$(nproc)
     make install
     make runtest
+    pip install scikit-image
     make pycaffe
   args:
     chdir: "{{ download_dir }}/caffe-{{ caffe_version }}/build"
