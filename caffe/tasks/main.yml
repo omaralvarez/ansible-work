@@ -35,6 +35,7 @@
     executable: /bin/bash
 
 - name: Compile caffe
+  become: true
   shell: |
     make -j$(nproc)
     make install
@@ -46,12 +47,12 @@
 
 - name: Update CAFFE_ROOT in bashrc for caffe
   lineinfile:
-    dest={{ home }}/{{ user }}/.bashrc
+    dest=~/.bashrc
     line="export CAFFE_ROOT={{ download_dir }}/caffe-{{ caffe_version }}"
     regexp="export CAFFE_ROOT=.*"
 
 - name: Update PYTHONPATH in bashrc for pycaffe
   lineinfile:
-    dest={{ home }}/{{ user }}/.bashrc
+    dest=~/.bashrc
     line="export PYTHONPATH={{ download_dir }}/caffe-{{ caffe_version }}/python:$PYTHONPATH"
     regexp="export PYTHONPATH=.*"

@@ -1,10 +1,12 @@
 ---
 - name: Install chrome keys
+  become: true
   apt_key:
     url: "{{ chrome_apt_keyurl }}"
     state: present
 
 - name: Install chrome apt repositories
+  become: true
   apt_repository:
     repo: "{{ item }}"
     state: present
@@ -13,6 +15,7 @@
   with_items: '{{chrome_apt_repositories}}'
 
 - name: Install chrome server apt packages
+  become: true
   apt:
     pkg: '{{ item }}'
     state: present
