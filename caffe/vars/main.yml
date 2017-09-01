@@ -1,3 +1,6 @@
 ---
 download_dir: /tmp
+cpu_only: -DCPU_ONLY=ON
+nvidia_caffe: https://github.com/NVIDIA/caffe/archive/v
+bvlc_caffe: https://github.com/BVLC/caffe/archive/
 caffe_version: 1.0

@@ -14,6 +14,7 @@
   - python-pip
   - python-protobuf
   - python-scipy
+  - python-tk
 
 - name: Check if temporary directory already exists
   stat: path={{ download_dir }}
@@ -23,7 +24,7 @@
   file: name={{ download_dir }} state=directory
   when: tmp.stat.exists == false
 
-- name: Download and unzip caffe
+- name: Download and unzip DIGITS
   unarchive: src=https://github.com/NVIDIA/DIGITS/archive/v{{ digits_version }}.tar.gz dest={{ download_dir }} copy=no
 
 - name: Install DIGITS
@@ -31,6 +32,8 @@
   shell: |
     pip install -r requirements.txt
     pip install -e .
+    pip uninstall matplotlib
+    pip install matplotlib
   args:
     chdir: "{{ download_dir }}/DIGITS-{{ digits_version }}"
     executable: /bin/bash

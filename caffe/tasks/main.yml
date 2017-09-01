@@ -12,9 +12,10 @@
   - libgflags-dev
   - libgoogle-glog-dev
   - liblmdb-dev
+  - python-numpy
 
 - name: Download and unzip caffe
-  unarchive: src=https://github.com/BVLC/caffe/archive/{{ caffe_version }}.tar.gz dest={{ download_dir }} copy=no
+  unarchive: src={{ bvlc_caffe }}{{ caffe_version }}.tar.gz dest={{ download_dir }} copy=no
 
 - name: Check if temporary directory already exists
   stat: path={{ download_dir }}
@@ -29,7 +30,7 @@
 
 - name: Make the caffe build artifacts
   shell: |
-    cmake -DBUILD_SHARED_LIB=ON -DUSE_CUDNN=OFF ..
+    cmake {{ cpu_only }} ..
   args:
     chdir: "{{ download_dir }}/caffe-{{ caffe_version }}/build"
     executable: /bin/bash

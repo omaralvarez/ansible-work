@@ -10,6 +10,7 @@
   apt_repository:
     repo: "{{ item }}"
     state: present
+    filename: "google-chrome"
     update_cache: yes
   register: chrome_install_packages
   with_items: '{{chrome_apt_repositories}}'

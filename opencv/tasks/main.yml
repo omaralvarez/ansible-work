@@ -3,7 +3,7 @@
   become: true
   apt: name={{ item }} state=present
   with_items:
-  - libjpeg62-turbo-dev
+  - libjpeg-turbo8-dev
   - libtiff5-dev
   - libpng-dev
   - libopenexr-dev
@@ -57,6 +57,7 @@
     executable: /bin/bash
 
 - name: Compile libjasper
+  become: true
   shell: |
     make -j$(nproc)
     make install

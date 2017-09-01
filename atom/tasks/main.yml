@@ -1,9 +1,17 @@
 ---
-- name: Download atom for Debian OS family
-  get_url: url={{ atom_url_deb }} dest={{atom_tmp_deb}}
-  tags: ["packages","atom"]
+- name: ensure ca-certificates installed
+  become: yes
+  apt:
+    name: ca-certificates
+    state: present
 
-- name: Install atom for Debian OS family
-  become: true
-  apt: deb={{atom_tmp_deb}}
-  tags: ["packages","atom"]
+- name: add atom ppa
+  become: yes
+  apt_repository:
+    repo: 'ppa:webupd8team/atom'
+
+- name: install atom
+  become: yes
+  apt:
+    name: atom
+    state: present
