@@ -1,0 +1,30 @@
+---
+- name: Download and unzip exiv2
+  unarchive: src=https://github.com/Exiv2/exiv2/archive/v{{ exiv2_version }}.tar.gz dest={{ download_dir }} copy=no
+
+- name: Check if temporary directory already exists
+  stat: path={{ download_dir }}
+  register: tmp
+
+- name: Create temporary download directory
+  file: name={{ download_dir }} state=directory
+  when: tmp.stat.exists == false
+
+- name: Create build directory
+  file: name={{ download_dir }}/exiv2-{{ exiv2_version }}/build state=directory
+
+- name: Make the exiv2 build artifacts
+  shell: |
+    cmake ..
+    make -j$(nproc)
+  args:
+    chdir: "{{ download_dir }}/exiv2-{{ exiv2_version }}/build"
+    executable: /bin/bash
+
+- name: Install
+  become: true
+  shell: |
+    make install
+  args:
+    chdir: "{{ download_dir }}/exiv2-{{ exiv2_version }}/build"
+    executable: /bin/bash

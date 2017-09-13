@@ -1,0 +1,6 @@
+---
+- name: Install only exiv2
+  hosts: all
+
+  roles:
+    - exiv2
