@@ -1,0 +1,6 @@
+---
+- name: Install only OpenCV
+  hosts: servers
+
+  roles:
+    - opencv

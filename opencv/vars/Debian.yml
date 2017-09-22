@@ -1,0 +1,7 @@
+---
+pkg_requirements_image:
+  - libjpeg62-turbo-dev
+  - libtiff5-dev
+  - libpng-dev
+  - libopenexr-dev
+  - libgdal-dev
