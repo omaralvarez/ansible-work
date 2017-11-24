@@ -14,5 +14,5 @@
     - tree
     - python-dev
     - python-pip
-    - python3.5-dev
+    - python3.4-dev
     - python3-pip

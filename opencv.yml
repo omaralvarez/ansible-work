@@ -1,6 +1,6 @@
 ---
 - name: Install only OpenCV
-  hosts: servers
+  hosts: amazon
 
   roles:
     - opencv

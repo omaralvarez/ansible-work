@@ -8,7 +8,6 @@
   - libsnappy-dev
   - libhdf5-serial-dev
   - protobuf-compiler
-  - libboost-all-dev
   - libgflags-dev
   - libgoogle-glog-dev
   - liblmdb-dev
@@ -43,6 +42,7 @@
     make runtest
     pip install scikit-image
     make pycaffe
+    cp -r install/include/* ../include
   args:
     chdir: "{{ download_dir }}/caffe-{{ caffe_version }}/build"
     executable: /bin/bash

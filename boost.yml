@@ -1,0 +1,6 @@
+---
+- name: Install only boost
+  hosts: all
+
+  roles:
+    - boost
